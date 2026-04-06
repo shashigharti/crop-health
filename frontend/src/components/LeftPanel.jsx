@@ -37,14 +37,7 @@ export default function LeftPanel() {
             <Plot />
           </fieldset>
         </div>
-      </div>
-      <button
-        className={`panel-toggle panel-toggle--${leftPanelOpen ? 'open' : 'closed'}`}
-        onClick={() => setLeftPanelOpen(!leftPanelOpen)}
-        title={leftPanelOpen ? 'Hide panel' : 'Show panel'}
-      >
-        {leftPanelOpen ? '◀' : '▶'}
-      </button>
+      </div>      
     </>
   )
 }

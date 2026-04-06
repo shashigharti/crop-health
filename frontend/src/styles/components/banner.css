@@ -20,6 +20,7 @@
 }
 
 .banner__step-num {
+  float: left;
   background: var(--color-accent);
   color: #fff;
   border-radius: 50%;
