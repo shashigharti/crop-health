@@ -1,10 +1,5 @@
 ---
 title: CropMap
-emoji: 🌿
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-pinned: false
 ---
 
 # CropMap
@@ -17,9 +12,7 @@ A crop mapping application for defining Areas of Interest, labeling crop feature
 - AOI management with editable classes
 - Crop feature polygon management (cocoa, coffee, other)
 - Stepper workflow with checkbox progress tracking
-- Date and confidence filters
-- Persistent state via localStorage
-- Mobile responsive
+- Filters
 
 ## Local Development
 
@@ -42,3 +35,5 @@ cd frontend && npm run build
 cd .. && uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 
+### Web View
+![Alt text](frontend/dist/assets/webui.png)

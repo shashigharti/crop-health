@@ -22,7 +22,7 @@ app.add_middleware(
 
 DIST = Path(__file__).parent.parent / "frontend" / "dist"
 
-app.include_router(router, prefix="/api")
+app.include_router(router)
 app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
 
 
