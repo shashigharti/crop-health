@@ -88,9 +88,9 @@ const syncPlotsLayer = (map, plotLayerRef) => {
 
   plotLayerRef.current = L.geoJSON(data, {
     style: (feature) => ({
-      color:       HEALTH_COLORS[feature.properties.health] ?? '#808080',
-      fillColor:   HEALTH_COLORS[feature.properties.health] ?? '#808080',
-      weight:      2,
+      color: HEALTH_COLORS[feature.properties.health] ?? '#808080',
+      fillColor: HEALTH_COLORS[feature.properties.health] ?? '#808080',
+      weight: 2,
       fillOpacity: 0.35,
     }),
     onEachFeature: (feature, layer) => {
@@ -246,7 +246,7 @@ export default function MapView() {
       () => syncCropMapLayer(map, cropMapLayerRef)
     )
     const unsubPlots = useStore.subscribe(
-      (s) => s.plotLayers.plots,      
+      (s) => s.plotLayers.plots,
       () => syncPlotsLayer(map, plotLayerRef)
     )
 

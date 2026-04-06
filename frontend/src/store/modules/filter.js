@@ -1,14 +1,14 @@
 export const createFilter = (set, get) => ({
-  selectedCrop:       null,
+  selectedCrop: null,
   selectedCropHealth: null,
 
-  setSelectedCrop:       (crop)   => set({ selectedCrop: crop }),
+  setSelectedCrop: (crop) => set({ selectedCrop: crop }),
   setSelectedCropHealth: (health) => set({ selectedCropHealth: health }),
 
   applyPlotFilters: (selectedCrops, selectedHealths) => {
     const { plotLayers } = get()
     const geojson = plotLayers?.plots?.geojson
-    
+
     if (!geojson) {
       console.warn('no geojson in plotLayers.plots')
       return
@@ -16,8 +16,8 @@ export const createFilter = (set, get) => ({
 
     const filteredGeojson = {
       ...geojson,
-      features: geojson.features.filter(f => {
-        const cropMatch   = !selectedCrops.length   || selectedCrops.includes(f.properties.crop)
+      features: geojson.features.filter((f) => {
+        const cropMatch = !selectedCrops.length || selectedCrops.includes(f.properties.crop)
         const healthMatch = !selectedHealths.length || selectedHealths.includes(f.properties.health)
         return cropMatch && healthMatch
       }),
@@ -36,7 +36,7 @@ export const createFilter = (set, get) => ({
   resetPlotFilters: () => {
     const { plotLayers } = get()
     set({
-      selectedCrop:       null,
+      selectedCrop: null,
       selectedCropHealth: null,
       plotLayers: {
         ...plotLayers,

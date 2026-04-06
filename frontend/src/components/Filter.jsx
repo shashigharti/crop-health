@@ -24,7 +24,7 @@ export default function Filter() {
     setSelectedCropHealth(null)
     applyPlotFilters([], [])
   }
-  
+
   return (
     <div className='filter-bar'>
       <label className='filter-bar__label'>Crop</label>

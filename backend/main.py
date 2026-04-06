@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -12,10 +13,17 @@ init_gee()
 
 app = FastAPI(title="CropHealth API")
 
-DIST = Path(__file__).parent.parent / "frontend" / "dist"
-app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app.include_router(router)
+DIST = Path(__file__).parent.parent / "frontend" / "dist"
+
+app.include_router(router, prefix="/api")
+app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
 
 
 @app.get("/{full_path:path}")
