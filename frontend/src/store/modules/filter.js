@@ -23,7 +23,7 @@ export const createFilter = (set, get) => ({
       }),
     }
 
-    console.log('filteredGeojson features:', filteredGeojson.features.length)
+    // console.log('filteredGeojson features:', filteredGeojson.features.length)
 
     set((state) => ({
       plotLayers: {

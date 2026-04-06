@@ -66,17 +66,21 @@ export const useGeeAPI = () => {
 
     for (const [cropName, polygons] of cropEntries) {
       for (const poly of polygons) {
+        console.log(poly);
+        const { aoi: geometry } = plotToAOI(poly);
+
         const res = await fetch('/api/training/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ geometry: poly.geometry, class_name: cropName }),
-        })
-        const data = await res.json()
+          body: JSON.stringify({ geometry, class_name: cropName }),
+        });
+
+        const data = await res.json();
         if (!res.ok) {
-          setUserMessage(`TRAINING: Error adding ${cropName} | ${data.detail}`)
-          return
+          setUserMessage(`TRAINING: Error adding ${cropName} | ${data.detail}`);
+          return;
         }
-        setUserMessage(`TRAINING: ${data.status}`)
+        setUserMessage(`TRAINING: ${data.status}`);
       }
     }
 

@@ -9,7 +9,7 @@ export default function FeatureList() {
       : []
     : []
 
-  console.log(featurePolygons)
+  // console.log(featurePolygons)
 
   const toggleVisible = (polyId) => {
     setFeaturePolygons({
