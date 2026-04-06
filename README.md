@@ -36,4 +36,4 @@ cd .. && uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Web View
-![Alt text](frontend/src/docs/webui.png)
+![Web UI Image](frontend/src/docs/webui.png)
