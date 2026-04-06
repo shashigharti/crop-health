@@ -1,0 +1,76 @@
+.feature-list {
+  border: 1px solid #bdc5b0;
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+}
+
+.feature-list > legend {
+  font-size: 0.68rem;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 0.4rem;
+  width: auto;
+  float: none;
+  margin-bottom: 0;
+}
+
+.feature-crops {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.2rem 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.2rem;
+}
+
+.feature-crop-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #ffffff;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.feature-crop-radio input[type='radio'] {
+  accent-color: #4a6e30;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.feature-polygons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.1rem 0.4rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.2rem;
+}
+
+.feature-poly-icon {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.feature-name {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.feature-empty {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  padding: 0.3rem 0.4rem;
+  margin: 0;
+}

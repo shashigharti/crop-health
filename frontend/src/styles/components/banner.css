@@ -1,0 +1,38 @@
+.banner {
+  background: var(--color-primary-light);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.78rem;
+  padding: 0.35rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.banner__how-to {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.banner__step {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.banner__step-num {
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.banner__step--done {
+  background: var(--color-success);
+}

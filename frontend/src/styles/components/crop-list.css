@@ -1,0 +1,81 @@
+.crop-list {
+  border: 1px solid #bdc5b0;
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+}
+
+.crop-list > legend {
+  font-size: 0.68rem;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 0.4rem;
+  width: auto;
+  float: none;
+  margin-bottom: 0;
+}
+
+.crop-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.2rem 0.4rem;
+}
+
+.crop-item input[type='checkbox'] {
+  margin-top: 2px;
+  accent-color: #4a6e30;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.crop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.crop-name {
+  font-size: 0.75rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.crop-bbox {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.03em;
+}
+
+.crop-empty {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  padding: 0.5rem 0.4rem;
+  margin: 0;
+}
+
+.crop-name-input {
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  color: var(--color-text-light);
+  font-size: 0.78rem;
+  padding: 0.1rem 0.3rem;
+  width: 100%;
+  outline: none;
+}
+
+.crop-edit-icon {
+  margin-left: 0.4rem;
+  font-size: 0.65rem;
+  opacity: 0.4;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.crop-edit-icon:hover {
+  opacity: 1;
+  color: var(--color-accent);
+}

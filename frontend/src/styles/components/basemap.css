@@ -1,0 +1,21 @@
+.basemap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.basemap-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.basemap-item input[type='checkbox'] {
+  accent-color: var(--color-accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}

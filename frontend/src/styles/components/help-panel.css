@@ -1,0 +1,18 @@
+.help-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  height: var(--topbar-height);
+  background-color: var(--color-primary-dark);
+  border-top: 1px solid var(--color-primary-light);
+  color: var(--color-text-light);
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.help-panel__mode {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}

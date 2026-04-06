@@ -1,0 +1,81 @@
+.controls-bar {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 1.25rem;
+  flex-shrink: 0;
+}
+
+.controls-bar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+  white-space: nowrap;
+}
+
+.controls-bar__btn i {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+.controls-bar__btn:hover {
+  background: var(--color-accent);
+  color: var(--color-text-light);
+  border-color: var(--color-accent);
+}
+.controls-bar__btn:hover i {
+  opacity: 1;
+}
+.controls-bar__btn--active {
+  background: var(--color-primary);
+  color: var(--color-text-light);
+  border-color: var(--color-primary);
+}
+.controls-bar__btn--aoi {
+  background: var(--color-success);
+  color: var(--color-text-light);
+  border-color: var(--color-success);
+}
+.controls-bar__btn--active i,
+.controls-bar__btn--aoi i {
+  opacity: 1;
+}
+
+/* preset — real checkbox + label */
+.preset-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.preset-checkbox input[type='checkbox'] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.preset-checkbox i {
+  font-size: 0.9rem;
+  color: var(--color-success);
+}
+
+.preset-checkbox span {
+  white-space: nowrap;
+}

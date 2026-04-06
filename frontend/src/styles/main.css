@@ -1,0 +1,36 @@
+@import './variables.css';
+@import './base.css';
+@import './components/topbar.css';
+@import './components/banner.css';
+@import './components/stepper.css';
+@import './components/controls-bar.css';
+@import './components/crop-list.css';
+@import './components/feature-list.css';
+@import './components/left-panel.css';
+@import './components/right-panel.css';
+@import './components/help-panel.css';
+@import './components/satellite.css';
+@import './components/plot.css';
+@import './components/legend.css';
+@import './components/basemap.css';
+@import './components/filter.css';
+@import './components/map.css';
+@import './responsive.css';
+
+.crop-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: rgba(255, 255, 255);
+  padding: 0.3rem 0.4rem 0;
+  margin-top: 0.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.crop-hint__icon {
+  font-size: 1rem;
+  color: yellow;
+  flex-shrink: 0;
+}

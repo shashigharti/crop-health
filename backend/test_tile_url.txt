@@ -1,0 +1,1 @@
+https://earthengine.googleapis.com/v1/projects/earthengine-legacy/maps/18bb14f5b281f52f1253d04aa26e927e-4073e4976b65e0567302d6ed191d1604/tiles/{z}/{x}/{y}

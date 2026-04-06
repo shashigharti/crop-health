@@ -1,0 +1,35 @@
+.legend {
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.legend__title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.legend__row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.legend__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: var(--color-border);
+}
+
+.legend__label {
+  font-size: 13px;
+  color: var(--color-text-light);
+}
