@@ -307,18 +307,26 @@ def make_plots():
             "geojson": DUMMY_GEOJSON,
         }
 
-    all_plots = all_plots.map(lambda f: f.set({
-        "ndvi_mean": ndvi.reduceRegion(ee.Reducer.mean(), f.geometry(), 20, maxPixels=1e9).get("NDVI"),
-        "ndre_mean": ndre.reduceRegion(ee.Reducer.mean(), f.geometry(), 60, maxPixels=1e9).get("NDRE"),
-    }))
+    all_plots = all_plots.map(
+        lambda f: f.set(
+            {
+                "ndvi_mean": ndvi.reduceRegion(
+                    ee.Reducer.mean(), f.geometry(), 20, maxPixels=1e9
+                ).get("NDVI"),
+                "ndre_mean": ndre.reduceRegion(
+                    ee.Reducer.mean(), f.geometry(), 60, maxPixels=1e9
+                ).get("NDRE"),
+            }
+        )
+    )
 
     def add_health(f):
         nv = ee.Number(f.get("ndvi_mean"))
         nr = ee.Number(f.get("ndre_mean"))
-        healthy  = nv.gte(0.60).And(nr.gte(0.20))
+        healthy = nv.gte(0.60).And(nr.gte(0.20))
         stressed = nv.lt(0.45).Or(nr.lt(0.10))
         moderate = healthy.Not().And(stressed.Not())
-        health   = ee.Number(0).where(moderate, 1).where(healthy, 2)
+        health = ee.Number(0).where(moderate, 1).where(healthy, 2)
         return f.set({"health": health, "area_ha": f.geometry().area(1).divide(10000)})
 
     plots_fc = all_plots.map(add_health)
