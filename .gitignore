@@ -16,7 +16,6 @@ backend/credentials/
 *secret*.json
 
 node_modules/
-dist/
 .next/
 
 *.log
