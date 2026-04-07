@@ -18,6 +18,9 @@ export const CROP_COLORS = {
   2: '#ff00ff',
 }
 
+export const AOI_COLOR = '#1565c0'
+export const FEATURE_COLOR = '#00ff00'
+
 export const createCommon = (set) => ({
   mode: MODES.ADD_AOI,
   userMessage: '',

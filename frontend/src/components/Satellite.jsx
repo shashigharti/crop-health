@@ -11,7 +11,7 @@ export default function SatelliteLayer() {
   const anyDownloading = satelliteLayerDefs.some((l) => aoiLayers[l.id]?.status === 'downloading')
 
   const toggleLayer = (aoiId, layerId) => {
-    const current = satelliteLayers[aoiId]?.[layerId]?.checked
+    const current = satelliteLayers[aoiId]?.[layerId]?.checked ?? true
     // console.log(satelliteLayers[aoiId], !current);
     setSatelliteLayer(aoiId, layerId, { checked: !current })
   }
@@ -40,7 +40,7 @@ export default function SatelliteLayer() {
           <div key={layer.id} className='crop-item sat-item'>
             <input
               type='checkbox'
-              checked={state.checked ?? false}
+              checked={state.checked ?? true}
               onChange={() => toggleLayer(selectedAoi.id, layer.id)}
             />
             <div className='crop-info' style={{ flex: 1 }}>

@@ -34,3 +34,74 @@
   color: yellow;
   flex-shrink: 0;
 }
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.25rem;
+  border-radius: var(--radius);
+  transition: background var(--transition);
+}
+
+.list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.list-item .list-item__info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.list-item .list-item__name {
+  font-size: 0.72rem;
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.list-item__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all var(--transition);
+}
+
+.list-item__btn--edit {
+  color: var(--color-accent);
+  opacity: 0.8;
+}
+
+.list-item__btn--edit:hover {
+  opacity: 1;
+  border-color: var(--color-accent);
+}
+
+.list-item__btn--delete {
+  color: var(--color-danger);
+  opacity: 0.8;
+}
+
+.list-item__btn--delete:hover {
+  opacity: 1;
+  border-color: var(--color-danger);
+}

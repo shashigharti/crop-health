@@ -1,13 +1,13 @@
 .feature-list {
-  border: 1px solid #bdc5b0;
-  border-radius: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
   padding: 0.25rem 0.5rem;
   background: transparent;
 }
 
 .feature-list > legend {
   font-size: 0.68rem;
-  color: #ffffff;
+  color: var(--color-text-light);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0 0.4rem;
@@ -31,13 +31,13 @@
   gap: 0.4rem;
   cursor: pointer;
   font-size: 0.75rem;
-  color: #ffffff;
+  color: var(--color-text-light);
   font-weight: 500;
   text-transform: capitalize;
 }
 
 .feature-crop-radio input[type='radio'] {
-  accent-color: #4a6e30;
+  accent-color: var(--color-success);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -58,18 +58,18 @@
 
 .feature-poly-icon {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   flex-shrink: 0;
 }
 
 .feature-name {
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--color-text-light);
 }
 
 .feature-empty {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   font-style: italic;
   padding: 0.3rem 0.4rem;
   margin: 0;

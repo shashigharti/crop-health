@@ -4,58 +4,74 @@ import 'leaflet/dist/leaflet.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { useStore } from '../store/useStore'
-import { bboxToGeoJSON, generateFeatureId } from '../utils/geo'
-import { MODES, HEALTH_COLORS, CROP_COLORS, HEALTH_LABELS } from '../store/modules/common'
+import { plotToAOI } from '../utils/geo'
+import { generateAoiId, generateFeatureId } from '../utils/common'
+import {
+  AOI_COLOR,
+  FEATURE_COLOR,
+  MODES,
+  HEALTH_COLORS,
+  CROP_COLORS,
+  HEALTH_LABELS,
+} from '../store/modules/common'
 
 const drawAois = (aoiLayer) => {
   const { aois } = useStore.getState()
   aoiLayer.clearLayers()
   aois
-    .filter((a) => a.bbox)
+    .filter((a) => a.geometry)
     .forEach((aoi) => {
-      L.geoJSON(bboxToGeoJSON(aoi), {
-        style: { color: aoi.color || '#1565c0', weight: 5, fillOpacity: 0.15 },
-        onEachFeature: (_, l) => {
-          l.options.aoiId = aoi.id
-          l.bindTooltip(aoi.name, { permanent: false })
-        },
-      }).addTo(aoiLayer)
+      L.geoJSON(
+        { type: 'Feature', geometry: aoi.geometry, properties: {} },
+        {
+          style: { color: aoi.color || AOI_COLOR, weight: 5, fillOpacity: 0.15 },
+          onEachFeature: (_, l) => {
+            l.options.aoiId = aoi.id
+            l.bindTooltip(aoi.name, { permanent: false })
+          },
+        }
+      ).addTo(aoiLayer)
     })
 }
 
 const syncOverlayLayers = (map, tileLayerRef) => {
-  const { satelliteLayers, aois } = useStore.getState()
-  const selectedAoi = aois.find((a) => a.checked)
-  const aoiLayers = selectedAoi ? (satelliteLayers[selectedAoi.id] ?? {}) : {}
+  const { satelliteLayers } = useStore.getState()
 
   Object.values(tileLayerRef.current).forEach((l) => map.removeLayer(l))
   tileLayerRef.current = {}
 
-  Object.entries(aoiLayers).forEach(([id, layer]) => {
-    if (layer?.url && layer?.checked !== false) {
-      tileLayerRef.current[id] = L.tileLayer(layer.url, {
-        attribution: '© Google Earth Engine',
-        opacity: 0.8,
-      }).addTo(map)
-    }
+  Object.entries(satelliteLayers).forEach(([aoiId, aoiLayers]) => {
+    if (!aoiLayers) return
+    Object.entries(aoiLayers).forEach(([id, layer]) => {
+      if (layer?.url && layer?.checked !== false) {
+        tileLayerRef.current[id] = L.tileLayer(layer.url, {
+          attribution: '© Google Earth Engine',
+          opacity: 0.8,
+        }).addTo(map)
+      }
+    })
   })
 }
 
 const syncFeatureLayers = (map, featureLayerRef) => {
-  const { featurePolygons, aois } = useStore.getState()
-  const selectedAoi = aois.find((a) => a.checked)
-  const crops = selectedAoi ? (featurePolygons[selectedAoi.id] ?? []) : []
+  const { featurePolygons } = useStore.getState()
 
   Object.values(featureLayerRef.current).forEach((l) => map.removeLayer(l))
   featureLayerRef.current = {}
 
-  crops
-    .filter((poly) => poly.visible !== false)
-    .forEach((poly) => {
-      featureLayerRef.current[poly.id] = L.geoJSON(poly.geometry, {
-        style: { color: '#27ae60', weight: 2, fillOpacity: 0.3 },
-      }).addTo(map)
-    })
+  Object.entries(featurePolygons).forEach(([aoiId, crops]) => {
+    if (!Array.isArray(crops)) return
+    crops
+      .filter((poly) => poly.visible !== false)
+      .forEach((poly) => {
+        featureLayerRef.current[poly.id] = L.geoJSON(
+          { type: 'Feature', geometry: poly.geometry, properties: {} },
+          {
+            style: { color: FEATURE_COLOR, weight: 2, fillOpacity: 0.3 },
+          }
+        ).addTo(map)
+      })
+  })
 }
 
 const syncCropMapLayer = (map, cropMapLayerRef) => {
@@ -82,7 +98,6 @@ const syncPlotsLayer = (map, plotLayerRef) => {
     plotLayerRef.current = null
   }
 
-  // use filteredGeojson if set (filter applied), else fall back to full geojson
   const data = filteredGeojson ?? geojson
   if (!data || !visible) return
 
@@ -183,6 +198,12 @@ export default function MapView() {
     map.on('pm:create', (e) => {
       const { mode, aois, setAois, addFeaturePolygon } = useStore.getState()
       const selectedAoi = aois.find((a) => a.checked)
+      const bounds = e.layer.getBounds()
+      const center = bounds.getCenter()
+
+      console.log('geometry:', JSON.stringify(e.layer.toGeoJSON().geometry))
+      console.log('bounds:', bounds)
+      console.log('center:', center)
 
       if (mode === MODES.ADD_FEATURE) {
         if (!selectedAoi) {
@@ -191,25 +212,47 @@ export default function MapView() {
         }
         const id = generateFeatureId(selectedAoi.id)
         e.layer.options.featureId = id
+
         addFeaturePolygon(selectedAoi.id, {
           id,
           name: `Feature ${id}`,
-          visible: true,
+          checked: true,
+          color: FEATURE_COLOR,
+          bbox: {
+            north: bounds.getNorth(),
+            south: bounds.getSouth(),
+            east: bounds.getEast(),
+            west: bounds.getWest(),
+          },
+          center: { lat: center.lat, lng: center.lng },
           geometry: e.layer.toGeoJSON().geometry,
         })
         return
       }
 
-      const bounds = e.layer.getBounds()
-      const center = bounds.getCenter()
-      e.layer.options.aoiId = Date.now()
+      e.layer.options.aoiId = generateAoiId()
+      console.log(`aoi:`, {
+        id: e.layer.options.aoiId,
+        name: 'New AOI',
+        checked: true,
+        color: AOI_COLOR,
+        bbox: {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest(),
+        },
+        center: { lat: center.lat, lng: center.lng },
+        geometry: e.layer.toGeoJSON().geometry,
+      })
+
       setAois([
         ...aois,
         {
           id: e.layer.options.aoiId,
           name: 'New AOI',
           checked: true,
-          color: '#1565c0',
+          color: AOI_COLOR,
           bbox: {
             north: bounds.getNorth(),
             south: bounds.getSouth(),
@@ -228,6 +271,10 @@ export default function MapView() {
     })
 
     drawAois(aoiLayer)
+    syncOverlayLayers(map, tileLayerRef)
+    syncFeatureLayers(map, featureLayerRef)
+    syncCropMapLayer(map, cropMapLayerRef)
+    syncPlotsLayer(map, plotLayerRef)
 
     const unsubAois = useStore.subscribe(
       (s) => s.aois,

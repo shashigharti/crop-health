@@ -20,10 +20,14 @@ export const useGeeAPI = () => {
     setUserMessage(`DATA DOWNLOAD: Started for ${aoiId}...`)
 
     try {
+      console.log(aoi)
       const res = await fetch('/api/images/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...plotToAOI(aoi), class_name: aoi.id }),
+        body: JSON.stringify({
+          aoi: aoi.geometry,
+          class_name: aoi.id,
+        }),
       })
       const data = await res.json()
 
@@ -66,21 +70,21 @@ export const useGeeAPI = () => {
 
     for (const [cropName, polygons] of cropEntries) {
       for (const poly of polygons) {
-        console.log(poly);
-        const { aoi: geometry } = plotToAOI(poly);
+        console.log(`poly ${poly}`)
+        const { aoi: geometry } = plotToAOI(poly)
 
         const res = await fetch('/api/training/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ geometry, class_name: cropName }),
-        });
+        })
 
-        const data = await res.json();
+        const data = await res.json()
         if (!res.ok) {
-          setUserMessage(`TRAINING: Error adding ${cropName} | ${data.detail}`);
-          return;
+          setUserMessage(`TRAINING: Error adding ${cropName} | ${data.detail}`)
+          return
         }
-        setUserMessage(`TRAINING: ${data.status}`);
+        setUserMessage(`TRAINING: ${data.status}`)
       }
     }
 

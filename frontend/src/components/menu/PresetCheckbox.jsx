@@ -1,26 +1,47 @@
 import { useStore } from '../../store/useStore'
+import { AOI_COLOR, FEATURE_COLOR } from '../../store/modules/common'
+
+import { bboxToGeometry } from '../../utils/geo'
 
 const PRESET_AOIS = [
   {
     id: 'coffee',
     name: 'Coffee',
     checked: true,
-    color: '#1565c0',
+    color: AOI_COLOR,
     bbox: { north: -0.411017, south: -0.428983, east: 36.958983, west: 36.941017 },
+    geometry: bboxToGeometry({
+      north: -0.411017,
+      south: -0.428983,
+      east: 36.958983,
+      west: 36.941017,
+    }),
   },
   {
     id: 'cocoa',
     name: 'Cocoa',
     checked: true,
-    color: '#1565c0',
+    color: AOI_COLOR,
     bbox: { north: 6.698983, south: 6.681017, east: -1.611017, west: -1.628983 },
+    geometry: bboxToGeometry({
+      north: 6.698983,
+      south: 6.681017,
+      east: -1.611017,
+      west: -1.628983,
+    }),
   },
   {
     id: 'other',
     name: 'Other',
     checked: true,
-    color: '#1565c0',
+    color: AOI_COLOR,
     bbox: { north: -0.441017, south: -0.458983, east: 36.908983, west: 36.891017 },
+    geometry: bboxToGeometry({
+      north: -0.441017,
+      south: -0.458983,
+      east: 36.908983,
+      west: 36.891017,
+    }),
   },
 ]
 
@@ -29,66 +50,127 @@ const PRESET_FEATURE_POLYGONS = [
     id: 'pf-coffee-1',
     name: 'Coffee Plot 1',
     crop: 'coffee',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: -0.411915, south: -0.428085, east: 36.958085, west: 36.941915 },
+    geometry: bboxToGeometry({
+      north: -0.411915,
+      south: -0.428085,
+      east: 36.958085,
+      west: 36.941915,
+    }),
   },
   {
     id: 'pf-coffee-2',
     name: 'Coffee Plot 2',
     crop: 'coffee',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: -0.412814, south: -0.427186, east: 36.957186, west: 36.942814 },
+    geometry: bboxToGeometry({
+      north: -0.412814,
+      south: -0.427186,
+      east: 36.957186,
+      west: 36.942814,
+    }),
   },
   {
     id: 'pf-coffee-3',
     name: 'Coffee Plot 3',
     crop: 'coffee',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: -0.413712, south: -0.426288, east: 36.956288, west: 36.943712 },
+    geometry: bboxToGeometry({
+      north: -0.413712,
+      south: -0.426288,
+      east: 36.956288,
+      west: 36.943712,
+    }),
   },
-
   {
     id: 'pf-cocoa-1',
     name: 'Cocoa Plot 1',
     crop: 'cocoa',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: 6.698085, south: 6.681915, east: -1.611915, west: -1.628085 },
+    geometry: bboxToGeometry({
+      north: 6.698085,
+      south: 6.681915,
+      east: -1.611915,
+      west: -1.628085,
+    }),
   },
   {
     id: 'pf-cocoa-2',
     name: 'Cocoa Plot 2',
     crop: 'cocoa',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: 6.697186, south: 6.682814, east: -1.612814, west: -1.627186 },
+    geometry: bboxToGeometry({
+      north: 6.697186,
+      south: 6.682814,
+      east: -1.612814,
+      west: -1.627186,
+    }),
   },
   {
     id: 'pf-cocoa-3',
     name: 'Cocoa Plot 3',
     crop: 'cocoa',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: 6.696288, south: 6.683712, east: -1.613712, west: -1.626288 },
+    geometry: bboxToGeometry({
+      north: 6.696288,
+      south: 6.683712,
+      east: -1.613712,
+      west: -1.626288,
+    }),
   },
-
   {
     id: 'pf-other-1',
     name: 'Other Plot 1',
     crop: 'other',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: -0.441915, south: -0.458085, east: 36.908085, west: 36.891915 },
+    geometry: bboxToGeometry({
+      north: -0.441915,
+      south: -0.458085,
+      east: 36.908085,
+      west: 36.891915,
+    }),
   },
   {
     id: 'pf-other-2',
     name: 'Other Plot 2',
     crop: 'other',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: -0.442814, south: -0.457186, east: 36.907186, west: 36.892814 },
+    geometry: bboxToGeometry({
+      north: -0.442814,
+      south: -0.457186,
+      east: 36.907186,
+      west: 36.892814,
+    }),
   },
   {
     id: 'pf-other-3',
     name: 'Other Plot 3',
     crop: 'other',
-    visible: true,
+    checked: true,
+    color: FEATURE_COLOR,
     bbox: { north: -0.443712, south: -0.456288, east: 36.906288, west: 36.893712 },
+    geometry: bboxToGeometry({
+      north: -0.443712,
+      south: -0.456288,
+      east: 36.906288,
+      west: 36.893712,
+    }),
   },
 ]
 
@@ -934,8 +1016,8 @@ export default function PresetCheckbox() {
     if (presetActive) {
       setAois(aois.filter((a) => !PRESET_AOIS.some((p) => p.id === a.id)))
       setFeaturePolygons([])
-      setPlotLayer('crop_map', { url: null, visible: false, label: 'Crop Classification' })
-      setPlotLayer('plots', { geojson: null, visible: false, label: 'Plots' })
+      setPlotLayer('crop_map', { url: null, checked: false, label: 'Crop Classification' })
+      setPlotLayer('plots', { geojson: null, checked: false, label: 'Plots' })
       return
     }
 
@@ -945,8 +1027,8 @@ export default function PresetCheckbox() {
       return crop
     }, {})
 
-    setPlotLayer('crop_map', { url: PRESET_TILE_URL, visible: false, label: 'Crop Classification' })
-    setPlotLayer('plots', { geojson: GEOJSON, visible: false, label: 'Plots' })
+    setPlotLayer('crop_map', { url: PRESET_TILE_URL, checked: false, label: 'Crop Classification' })
+    setPlotLayer('plots', { geojson: GEOJSON, checked: false, label: 'Plots' })
     setFeaturePolygons(featureByClass)
     setAois([...aois.filter((a) => !PRESET_AOIS.some((p) => p.id === a.id)), ...PRESET_AOIS])
   }

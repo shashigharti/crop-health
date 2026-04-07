@@ -1,4 +1,5 @@
 import { useStore } from '../store/useStore'
+import Hint from './Hint'
 
 export default function FeatureList() {
   const { featurePolygons, aois, clearCropFeatures, setFeaturePolygons } = useStore()
@@ -9,7 +10,7 @@ export default function FeatureList() {
       : []
     : []
 
-  // console.log(featurePolygons)
+  console.log(featurePolygons)
 
   const toggleVisible = (polyId) => {
     setFeaturePolygons({
@@ -20,15 +21,25 @@ export default function FeatureList() {
     })
   }
 
+  const deleteFeature = (polyId) => {
+    setFeaturePolygons({
+      ...featurePolygons,
+      [selectedAoi.id]: featurePolygons[selectedAoi.id].filter((p) => p.id !== polyId),
+    })
+  }
+
   return (
     <fieldset className='feature-list'>
       <legend>Feature List{selectedAoi ? ` — ${selectedAoi.name}` : ''}</legend>
 
       {!selectedAoi && (
-        <div className='crop-empty'>
-          <i className='bi bi-arrow-up crop-empty__icon' />
-          <span>Select an AOI above to view its features</span>
-        </div>
+        <Hint
+          message={
+            <>
+              <span>Select an AOI above to view its features</span>
+            </>
+          }
+        />
       )}
 
       {selectedAoi && selectedPolygons.length === 0 && (
@@ -41,17 +52,29 @@ export default function FeatureList() {
       )}
 
       {selectedPolygons.map((poly) => (
-        <div key={poly.id} className='crop-item'>
+        <div key={poly.id} className='list-item'>
           <input
             type='checkbox'
-            checked={poly.visible ?? false}
+            checked={poly.visible ?? true}
             onChange={() => toggleVisible(poly.id)}
           />
-          <div className='crop-info'>
-            <span className='crop-name'>
+          <div className='list-item__info'>
+            <span className='list-item__name'>
               <i className='bi bi-pentagon' style={{ marginRight: '0.3rem', opacity: 0.6 }} />
               {String(poly.name)}
             </span>
+          </div>
+          <div className='list-item__actions'>
+            <button className='list-item__btn list-item__btn--edit' title='Edit feature'>
+              <i className='bi bi-pencil-square' />
+            </button>
+            <button
+              className='list-item__btn list-item__btn--delete'
+              onClick={() => deleteFeature(poly.id)}
+              title='Delete feature'
+            >
+              <i className='bi bi-trash3' />
+            </button>
           </div>
         </div>
       ))}

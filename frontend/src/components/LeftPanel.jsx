@@ -37,7 +37,7 @@ export default function LeftPanel() {
             <Plot />
           </fieldset>
         </div>
-      </div>      
+      </div>
     </>
   )
 }

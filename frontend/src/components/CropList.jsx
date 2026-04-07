@@ -40,6 +40,10 @@ export default function CropList() {
     setEditingId(null)
   }
 
+  const deleteAoi = (id) => {
+    setAois(aois.filter((a) => a.id !== id))
+  }
+
   return (
     <fieldset className='crop-list'>
       <legend>STEP1 — Crops (Classes)</legend>
@@ -49,14 +53,14 @@ export default function CropList() {
         <p className='crop-empty'>No AOIs set — Add AOIs for classes or use preset</p>
       ) : (
         aois.map((aoi) => (
-          <div key={aoi.id} className='crop-item'>
+          <div key={aoi.id} className='list-item'>
             <input
               type='radio'
               name='crop-selection'
               checked={aoi.id === selectedId}
               onChange={() => handleChange(aoi.id)}
             />
-            <div className='crop-info' style={{ flex: 1 }}>
+            <div className='list-item__info'>
               {editingId === aoi.id ? (
                 <input
                   className='crop-name-input'
@@ -68,20 +72,29 @@ export default function CropList() {
                   onKeyDown={(e) => e.key === 'Enter' && commitEdit()}
                 />
               ) : (
-                <span className='crop-name'>
-                  {aoi.name}
-                  <i
-                    className='bi bi-pencil crop-edit-icon'
-                    title='Edit name'
-                    onClick={() => startEdit(aoi)}
-                  />
-                </span>
+                <span className='list-item__name'>{aoi.name}</span>
               )}
-              {aoi.bbox && (
+              {/* {aoi.bbox && (
                 <span className='crop-bbox'>
                   N {aoi.bbox.north}° S {aoi.bbox.south}° E {aoi.bbox.east}° W {aoi.bbox.west}°
                 </span>
-              )}
+              )} */}
+            </div>
+            <div className='list-item__actions'>
+              <button
+                className='list-item__btn list-item__btn--edit'
+                onClick={() => startEdit(aoi)}
+                title='Edit name'
+              >
+                <i className='bi bi-pencil-square' />
+              </button>
+              <button
+                className='list-item__btn list-item__btn--delete'
+                onClick={() => deleteAoi(aoi.id)}
+                title='Delete AOI'
+              >
+                <i className='bi bi-trash3' />
+              </button>
             </div>
           </div>
         ))

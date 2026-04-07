@@ -11,6 +11,7 @@
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
+  font-weight: 600;
 }
 
 .banner__step {
@@ -20,13 +21,15 @@
 }
 
 .banner__step-num {
+  margin-right: 5px;
   float: left;
   background: var(--color-accent);
   color: #fff;
   border-radius: 50%;
   width: 16px;
   height: 16px;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;

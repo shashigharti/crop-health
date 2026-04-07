@@ -7,12 +7,10 @@
   background-color: var(--color-primary-dark);
   border-top: 1px solid var(--color-primary-light);
   color: var(--color-text-light);
-  font-family: var(--font-main);
-  font-size: 0.8rem;
-  font-weight: 500;
+  /* font-family: var(--font-main); */
+  font-size: 0.7rem;
 }
 
 .help-panel__mode {
-  font-weight: 600;
   letter-spacing: 0.02em;
 }
