@@ -8,8 +8,12 @@ GEE_SERVICE_ACCOUNT_KEY_PATH=/credentials/your-key.json
 
 ## 2. Build & Run
 ```bash
-make docker-build
-make docker-start
+docker build -t crop-health .
+docker run -d -p 7860:7860 \
+  --env-file .env.docker \
+  -v /path/to/your-key.json:/credentials/your-key.json \
+  --name crop-health \
+  crop-health
 ```
 
 Open **http://localhost:7860**
