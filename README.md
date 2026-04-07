@@ -4,48 +4,46 @@ emoji: 🌍
 colorFrom: green
 colorTo: indigo
 sdk: docker
+app_port: 7860
 pinned: false
 license: mit
 short_description: Crop Health Prediction
 ---
 
-# CropHealth
-A crop mapping application for defining Areas of Interest (AOIs), labeling crop feature polygons, and training classification models.
+# 🌍 CropHealth
+
+A crop mapping application for defining Areas of Interest (AOIs), labeling crop feature polygons, and training classification models using Google Earth Engine.
 
 ## Features
-
 - Interactive map with Google Hybrid and Esri basemaps
 - AOI management with editable classes
 - Crop feature polygon labeling (cocoa, coffee, other)
 - Guided stepper workflow with checkbox-based progress tracking
 - Dynamic filters
 
-## Local Development
+## Documentation
+- [Local Development](docs/local-development.md)
+- [Docker](docs/docker.md)
+- [HuggingFace Deployment](docs/deployment.md)
+- [GEE Setup](docs/gee-setup.md)
 
-### 1. Configure Environment Variables
+## Quick Start
 
-Create a `.env` file in the project root:
-```env
-GEE_SERVICE_ACCOUNT=crophealth@abc-project.iam.gserviceaccount.com
-GEE_SERVICE_ACCOUNT_KEY_PATH=/path/to/credentials/<filename>.json
-```
+### 1. Add GEE Credentials
+Place your GEE service account key (`.json`) inside the `credentials/` folder:
 
-### 2. Add GEE Credentials
+credentials/
+└── your-key.json
 
-Place your Google Earth Engine service account key (`.json`) inside the `credentials/` folder.
-
-### 3. Install & Run
+### 2. Run
 ```bash
-cd frontend && npm install && npm run build
-
-uvicorn backend.main:app --host 0.0.0.0 --port 8000
+make start
 ```
 
-## Production Build
-```bash
-uvicorn backend.main:app --host 0.0.0.0 --port 8000
-```
-
-## Web UI
-
-![Web UI](frontend/src/docs/webui.png)
+That's it! The script will automatically:
+- ✅ Detect your credentials and configure `.env`
+- ✅ Install frontend dependencies
+- ✅ Set up Python virtual environment
+- ✅ Install Python dependencies
+- ✅ Authenticate with Google Earth Engine
+- ✅ Start the app at **http://localhost:7860**
