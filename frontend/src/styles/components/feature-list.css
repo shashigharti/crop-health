@@ -74,3 +74,33 @@
   padding: 0.3rem 0.4rem;
   margin: 0;
 }
+.feature-list__delete {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.15s;
+}
+
+.feature-list__delete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.feature-list__delete--danger {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.feature-list__delete:hover {
+  opacity: 0.9;
+}

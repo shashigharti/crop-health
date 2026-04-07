@@ -1016,8 +1016,8 @@ export default function PresetCheckbox() {
     if (presetActive) {
       setAois(aois.filter((a) => !PRESET_AOIS.some((p) => p.id === a.id)))
       setFeaturePolygons([])
-      setPlotLayer('crop_map', { url: null, checked: false, label: 'Crop Classification' })
-      setPlotLayer('plots', { geojson: null, checked: false, label: 'Plots' })
+      // setPlotLayer('crop_map', { url: null, checked: false, label: 'Crop Classification' })
+      // setPlotLayer('plots', { geojson: null, checked: false, label: 'Plots' })
       return
     }
 
@@ -1027,8 +1027,8 @@ export default function PresetCheckbox() {
       return crop
     }, {})
 
-    setPlotLayer('crop_map', { url: PRESET_TILE_URL, checked: false, label: 'Crop Classification' })
-    setPlotLayer('plots', { geojson: GEOJSON, checked: false, label: 'Plots' })
+    // setPlotLayer('crop_map', { url: PRESET_TILE_URL, checked: false, label: 'Crop Classification' })
+    // setPlotLayer('plots', { geojson: GEOJSON, checked: false, label: 'Plots' })
     setFeaturePolygons(featureByClass)
     setAois([...aois.filter((a) => !PRESET_AOIS.some((p) => p.id === a.id)), ...PRESET_AOIS])
   }

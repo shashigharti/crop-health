@@ -5,6 +5,7 @@ from schemas.download import DownloadRequest, LayersResponse
 from schemas.plots import PlotsResponse
 from schemas.training import TrainingRequest, TrainingResponse, TrainResponse
 from utils.gee_helpers import nearest_emit_band_name, get_tile_url, mask_s2
+from utils.dummy import DUMMY_GEOJSON
 
 router = APIRouter(prefix="/api")
 
@@ -74,11 +75,6 @@ def get_or_create_label(class_name: str) -> int:
     if class_name not in state["class_label_map"]:
         state["class_label_map"][class_name] = len(state["class_label_map"])
     return state["class_label_map"][class_name]
-
-
-@router.get("/health")
-def health():
-    return {"status": "ok"}
 
 
 @router.post("/images/download", response_model=LayersResponse)
@@ -186,19 +182,6 @@ def add_training(request: TrainingRequest):
     }
 
 
-# @router.get("/training/count")
-# def training_count():
-#     if state["training_fc"] is None:
-#         return {"total": 0}
-#     return {"total": state["training_fc"].size().getInfo()}
-
-# @router.delete("/training/clear")
-# def clear_training():
-#     state["training_fc"]     = ee.FeatureCollection([])
-#     state["class_label_map"] = {}
-#     return {"status": "Training data cleared."}
-
-
 @router.post("/training/train", response_model=TrainResponse)
 def train():
     if not state["classes"]:
@@ -266,19 +249,28 @@ def make_plots():
     if not state["class_img"] or not state["classes"]:
         raise HTTPException(status_code=400, detail="Train the model first.")
 
-    first_name = next(iter(state["classes"]))
-    first = state["classes"][first_name]
+    all_values = list(state["classes"].values())
+    merged_aoi = all_values[0]["aoi"]
+    for v in all_values[1:]:
+        merged_aoi = merged_aoi.union(v["aoi"])
 
-    aoi = first["aoi"]
-    ndvi = first["ndvi"]
-    ndre = first["ndre"]
-    crop_img = (
-        state["class_img"]
-        if isinstance(state["class_img"], ee.Image)
-        else state["class_img"][first_name]
-    )
+    ndvi = ee.ImageCollection([v["ndvi"] for v in all_values]).mosaic()
+    ndre = ee.ImageCollection([v["ndre"] for v in all_values]).mosaic()
+    crop_img = state["class_img"]
 
     def build_plots(mask, crop_name, scale_m=60):
+        mask_stats = mask.reduceRegion(
+            reducer=ee.Reducer.sum(),
+            geometry=merged_aoi,
+            scale=scale_m,
+            maxPixels=1e13,
+            bestEffort=True,
+        ).getInfo()
+
+        pixel_sum = list(mask_stats.values())[0] if mask_stats else 0
+        if not pixel_sum:
+            return None
+
         labeled = (
             mask.selfMask()
             .connectedComponents(ee.Kernel.square(1), 1024)
@@ -286,57 +278,54 @@ def make_plots():
             .rename("plot_id")
         )
         plots = labeled.reduceToVectors(
-            geometry=aoi,
+            reducer=ee.Reducer.countEvery(),
+            geometry=merged_aoi,
             scale=scale_m,
             geometryType="polygon",
             labelProperty="plot_id",
             bestEffort=True,
             maxPixels=1e13,
         )
+        if plots.size().getInfo() == 0:
+            return None
         return plots.map(lambda f: f.set({"crop": crop_name}))
 
     all_plots = None
+    skipped = []
     for class_name, label in state["class_label_map"].items():
         if class_name == "other":
             continue
         plots = build_plots(crop_img.eq(label), class_name)
+        if plots is None:
+            skipped.append(class_name)
+            continue
         all_plots = plots if all_plots is None else all_plots.merge(plots)
 
-    if all_plots is None:
-        raise HTTPException(status_code=400, detail="No crop plots found.")
+    if all_plots is None or all_plots.size().getInfo() == 0:
+        return {
+            "status": f"No plots found. Skipped: {skipped}. Showing dummy data for UI testing.",
+            "geojson": DUMMY_GEOJSON,
+        }
 
-    def add_indices(f):
-        return f.set(
-            {
-                "ndvi_mean": ndvi.reduceRegion(
-                    ee.Reducer.mean(), f.geometry(), 20, maxPixels=1e9
-                ).get("NDVI"),
-                "ndre_mean": ndre.reduceRegion(
-                    ee.Reducer.mean(), f.geometry(), 60, maxPixels=1e9
-                ).get("NDRE"),
-            }
-        )
+    all_plots = all_plots.map(lambda f: f.set({
+        "ndvi_mean": ndvi.reduceRegion(ee.Reducer.mean(), f.geometry(), 20, maxPixels=1e9).get("NDVI"),
+        "ndre_mean": ndre.reduceRegion(ee.Reducer.mean(), f.geometry(), 60, maxPixels=1e9).get("NDRE"),
+    }))
 
     def add_health(f):
         nv = ee.Number(f.get("ndvi_mean"))
         nr = ee.Number(f.get("ndre_mean"))
-        healthy = nv.gte(0.60).And(nr.gte(0.20))
+        healthy  = nv.gte(0.60).And(nr.gte(0.20))
         stressed = nv.lt(0.45).Or(nr.lt(0.10))
+        moderate = healthy.Not().And(stressed.Not())
+        health   = ee.Number(0).where(moderate, 1).where(healthy, 2)
+        return f.set({"health": health, "area_ha": f.geometry().area(1).divide(10000)})
 
-        health = ee.Algorithms.If(healthy, 2, ee.Algorithms.If(stressed, 0, 1))
-
-        return f.set(
-            {
-                "health": health,
-                "area_ha": f.geometry().area(1).divide(10000),
-            }
-        )
-
-    plots_fc = all_plots.map(add_indices).map(add_health)
+    plots_fc = all_plots.map(add_health)
     state["plots_fc"] = plots_fc
     geojson = plots_fc.getInfo()
 
     return {
-        "status": f"Plots created: {len(geojson['features'])} plots for AOI: {first_name}.",
+        "status": f"Plots created: {len(geojson['features'])} plots. Skipped: {skipped}.",
         "geojson": geojson,
     }

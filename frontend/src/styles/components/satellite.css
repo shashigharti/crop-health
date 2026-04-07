@@ -22,7 +22,7 @@
   font-size: 0.7rem;
 }
 
-.sat-btn {
+/* .sat-btn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 3px;
@@ -44,7 +44,7 @@
 .sat-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-}
+} */
 
 .sat-download-all {
   display: flex;
@@ -74,14 +74,4 @@
 .sat-download-all:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-}
-
-.sat-download-all--danger {
-  background-color: var(--color-danger);
-  border-color: var(--color-danger);
-}
-
-.sat-download-all--danger:hover {
-  background-color: var(--color-warning);
-  border-color: var(--color-warning);
 }

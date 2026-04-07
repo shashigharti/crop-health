@@ -1,13 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import Hint from './Hint'
-
-const toSlug = (str) =>
-  str
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
+import { toSlug } from '../utils/common'
 
 export default function CropList() {
   const { aois, setAois, setMapCenter } = useStore()
@@ -15,6 +9,8 @@ export default function CropList() {
   const [editingName, setEditingName] = useState('')
 
   const selectedId = aois.find((a) => a.checked)?.id ?? null
+
+  console.log(aois)
 
   const handleChange = (id) => {
     setAois(aois.map((a) => ({ ...a, checked: a.id === id })))
