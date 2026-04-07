@@ -9,9 +9,12 @@ FROM python:3.11-slim
 WORKDIR /app
 
 RUN useradd -m -u 1000 user
+RUN mkdir -p /credentials && chown user:user /credentials
+
 USER user
 ENV HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH \
+    PYTHONPATH=/app/backend
 
 COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

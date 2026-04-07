@@ -1,9 +1,15 @@
 ---
-title: CropMap
+title: Crop Health
+emoji: 🌍
+colorFrom: green
+colorTo: indigo
+sdk: docker
+pinned: false
+license: mit
+short_description: Crop Health Prediction
 ---
 
-# CropMap
-
+# CropHealth
 A crop mapping application for defining Areas of Interest (AOIs), labeling crop feature polygons, and training classification models.
 
 ## Features
