@@ -7,6 +7,8 @@ const DEFAULT_SATELLITE_LAYERS = [
 
 export const createSatellite = (set) => ({
   satelliteLayerDefs: DEFAULT_SATELLITE_LAYERS,
+  downloadData: false,
+  setDownloadData: (downloadData) => set({ downloadData }),
 
   satelliteLayers: {},
 
@@ -38,7 +40,9 @@ export const createSatellite = (set) => ({
 
   removeSatelliteLayer: (aoiId) =>
     set((s) => {
+      console.log('removing', aoiId, s.satelliteLayers)
       const { [aoiId]: _, ...rest } = s.satelliteLayers
+      console.log('remaining', rest)
       return { satelliteLayers: rest }
     }),
 })

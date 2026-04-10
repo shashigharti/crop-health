@@ -16,7 +16,7 @@ export default function App() {
     if (aois.length === 0) {
       setUserMessage('Use Preset or Add AOIs by drawing a bounding box on the map')
     }
-    console.log('init')
+    // console.log('init')
   }, [])
 
   return (

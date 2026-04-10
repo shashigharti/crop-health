@@ -1,14 +1,23 @@
-export const createAoi = (set) => ({
+export const createAoi = (set, get) => ({
   aois: [],
 
   setAois: (aois) => set({ aois }),
+  selectedAoi: null,
+  setSelectedAoi: (id) => {
+    const aois = get().aois
+    // console.log('id received:', id)
+    const found = aois.find((aoi) => aoi.id === id) ?? null
+    // console.log('found result:', found)
+
+    set({ selectedAoi: found })
+  },
 
   addAoi: (aoi) =>
     set((s) => ({
       aois: [
         ...s.aois,
         {
-          id: aoi.id ?? Date.now(),
+          id: aoi.id,
           name: aoi.name || 'New AOI',
           checked: true,
           color: aoi.color || '#1565c0',

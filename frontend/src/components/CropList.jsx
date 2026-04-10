@@ -1,19 +1,15 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import Hint from './Hint'
-import { toSlug } from '../utils/common'
 
 export default function CropList() {
-  const { aois, setAois, setMapCenter } = useStore()
+  const { aois, setAois, selectedAoi, setSelectedAoi, removeSatelliteLayer, setMapCenter } =
+    useStore()
   const [editingId, setEditingId] = useState(null)
   const [editingName, setEditingName] = useState('')
 
-  const selectedId = aois.find((a) => a.checked)?.id ?? null
-
-  console.log(aois)
-
   const handleChange = (id) => {
-    setAois(aois.map((a) => ({ ...a, checked: a.id === id })))
+    setSelectedAoi(id)
     const aoi = aois.find((a) => a.id === id)
     if (aoi?.bbox) {
       const { north, south, east, west } = aoi.bbox
@@ -30,13 +26,15 @@ export default function CropList() {
     const newName = editingName.trim()
     if (newName) {
       setAois(
-        aois.map((a) => (a.id === editingId ? { ...a, name: newName, id: toSlug(newName) } : a))
+        // aois.map((a) => (a.id === editingId ? { ...a, name: newName, id: toSlug(newName) } : a))
+        aois.map((a) => (a.id === editingId ? { ...a, name: newName } : a))
       )
     }
     setEditingId(null)
   }
 
   const deleteAoi = (id) => {
+    removeSatelliteLayer(selectedAoi.id)
     setAois(aois.filter((a) => a.id !== id))
   }
 
@@ -53,7 +51,7 @@ export default function CropList() {
             <input
               type='radio'
               name='crop-selection'
-              checked={aoi.id === selectedId}
+              checked={selectedAoi?.id === aoi.id}
               onChange={() => handleChange(aoi.id)}
             />
             <div className='list-item__info'>

@@ -1,10 +1,9 @@
 import { useStore } from '../store/useStore'
-import { plotToAOI } from '../utils/geo'
 
 const CROP_KEYS = ['cocoa', 'coffee', 'other']
 
 export const useGeeAPI = () => {
-  const { aois, satelliteLayerDefs, setSatelliteLayer } = useStore()
+  const { aois, satelliteLayerDefs, setSatelliteLayer, startDate, endDate } = useStore()
 
   const { setUserMessage, setStepComplete } = useStore.getState()
 
@@ -19,14 +18,20 @@ export const useGeeAPI = () => {
     satelliteLayerDefs.forEach((l) => setSatelliteLayer(aoiId, l.id, { status: 'downloading' }))
     setUserMessage(`DATA DOWNLOAD: Started for ${aoiId}...`)
 
+    const toDateOnly = (date) => {
+      const d = new Date(date)
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    }
+
     try {
-      console.log(aoi)
       const res = await fetch('/api/images/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           aoi: aoi.geometry,
           class_name: aoi.id,
+          start_date: toDateOnly(startDate),
+          end_date: toDateOnly(endDate),
         }),
       })
       const data = await res.json()
@@ -37,9 +42,10 @@ export const useGeeAPI = () => {
         return
       }
 
-      Object.entries(data.layers).forEach(([id, url]) =>
-        setSatelliteLayer(aoiId, id, { status: 'done', url })
-      )
+      Object.entries(data.layers).forEach(([id, details]) => {
+        // console.log(id, details)
+        setSatelliteLayer(aoiId, id, { ...details, status: 'done' })
+      })
       setUserMessage(`DATA DOWNLOAD: ${data.status}`)
     } catch (e) {
       satelliteLayerDefs.forEach((l) => setSatelliteLayer(aoiId, l.id, { status: 'error' }))

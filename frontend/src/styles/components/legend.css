@@ -3,23 +3,24 @@
   border-radius: 8px;
 }
 
-.legend__title {
-  font-weight: 600;
-  font-size: 14px;
-}
-
 .legend__row {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  flex-direction: row;
   gap: 10px;
   overflow-x: auto;
 }
 
 .legend__item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;
+}
+
+.legend__label {
+  font-weight: 700;
+  font-size: 9px;
+  color: var(--color-text-light);
 }
 
 .legend__dot {
@@ -27,9 +28,5 @@
   height: 12px;
   border-radius: 50%;
   border: var(--color-border);
-}
-
-.legend__label {
-  font-size: 13px;
-  color: var(--color-text-light);
+  flex-shrink: 0;
 }

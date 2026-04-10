@@ -10,8 +10,8 @@ export default function Filter() {
     applyPlotFilters,
   } = useStore()
 
-  const cropOptions = Object.entries(CROP_LABELS) // [[0,'Other'],[1,'Coffee'],[2,'Cocoa']]
-  const healthOptions = Object.entries(HEALTH_LABELS) // [[0,'Stressed'],[1,'Moderate'],[2,'Healthy']]
+  const cropOptions = Object.entries(CROP_LABELS)
+  const healthOptions = Object.entries(HEALTH_LABELS)
 
   const handleApply = () => {
     const crops = selectedCrop ? [selectedCrop] : []

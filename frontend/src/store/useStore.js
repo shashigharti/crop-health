@@ -8,6 +8,7 @@ import { createFeature } from './modules/feature'
 import { createSatellite } from './modules/satellite'
 import { createPlot } from './modules/plot'
 import { createCommon } from './modules/common'
+import { createDateSelector } from './modules/dateselector'
 
 const STORAGE_KEY = 'cropmap-state'
 
@@ -23,11 +24,12 @@ export const useStore = create(
         ...createSatellite(set, get),
         ...createCommon(set, get),
         ...createPlot(set, get),
+        ...createDateSelector(set, get),
       }),
       {
         name: STORAGE_KEY,
         partialize: (state) => {
-          const { mapInstance, mapCenter, mapZoom, selectedAoi, ...rest } = state
+          const { mapInstance, mapZoom, ...rest } = state
           return rest
         },
       }

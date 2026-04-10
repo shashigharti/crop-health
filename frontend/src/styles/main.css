@@ -15,7 +15,9 @@
 @import './components/basemap.css';
 @import './components/filter.css';
 @import './components/map.css';
+@import './components/date-selector.css';
 @import './responsive.css';
+@import './lib/react-datepicker.css';
 
 .crop-hint {
   display: flex;

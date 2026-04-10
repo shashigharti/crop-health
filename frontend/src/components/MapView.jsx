@@ -196,14 +196,15 @@ export default function MapView() {
     })
 
     map.on('pm:create', (e) => {
-      const { mode, aois, setAois, addFeaturePolygon } = useStore.getState()
-      const selectedAoi = aois.find((a) => a.checked)
+      const { mode, aois, setAois, selectedAoi, setSelectedAoi, addFeaturePolygon } =
+        useStore.getState()
+      // const selectedAoi = aois.find((a) => a.checked)
       const bounds = e.layer.getBounds()
       const center = bounds.getCenter()
 
-      console.log('geometry:', JSON.stringify(e.layer.toGeoJSON().geometry))
-      console.log('bounds:', bounds)
-      console.log('center:', center)
+      // console.log('geometry:', JSON.stringify(e.layer.toGeoJSON().geometry))
+      // console.log('bounds:', bounds)
+      // console.log('center:', center)
 
       if (mode === MODES.ADD_FEATURE) {
         if (!selectedAoi) {
@@ -231,21 +232,6 @@ export default function MapView() {
       }
 
       e.layer.options.aoiId = generateAoiId()
-      console.log(`aoi:`, {
-        id: e.layer.options.aoiId,
-        name: 'New AOI',
-        checked: true,
-        color: AOI_COLOR,
-        bbox: {
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
-        },
-        center: { lat: center.lat, lng: center.lng },
-        geometry: e.layer.toGeoJSON().geometry,
-      })
-
       setAois([
         ...aois,
         {
@@ -263,6 +249,7 @@ export default function MapView() {
           geometry: e.layer.toGeoJSON().geometry,
         },
       ])
+      setSelectedAoi(e.layer.options.aoiId)
     })
 
     map.on('pm:remove', (e) => {

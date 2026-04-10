@@ -3,9 +3,10 @@ import { useGeeAPI } from '../apis/gee'
 import FeatureCheckbox from './menu/FeatureCheckbox'
 import PresetCheckbox from './menu/PresetCheckbox'
 import Filter from './Filter'
+import DateSelector from './DateSelector'
 
 const LEFT_ITEMS = [
-  { name: 'Train the Model', icon: 'bi-cpu', mode: 'train' },
+  // { name: 'Train the Model', icon: 'bi-cpu', mode: 'train' },
   { name: 'Make Plot', icon: 'bi-bar-chart', mode: 'makePlot' },
 ]
 
@@ -88,17 +89,18 @@ export default function ControlsBar() {
     <div className='controls-bar'>
       <div className='container-fluid'>
         <div className='row align-items-center'>
-          <div className='col-3 d-flex justify-content-start align-items-center gap-2'>
+          <div className='col-2 d-flex justify-content-start align-items-center gap-2'>
             {LEFT_ITEMS.map(renderBtn)}
           </div>
-          <div className='col-2 d-flex justify-content-center gap-3'>
+          <div className='col-4 d-flex justify-content-center gap-3'>
             <PresetCheckbox />
-            <FeatureCheckbox />
+            {/* <FeatureCheckbox /> */}
+            <DateSelector />
           </div>
           <div className='col-4 d-flex justify-content-center gap-3'>
             <Filter />
           </div>
-          <div className='col-2 d-flex justify-content-end gap-2'>{RIGHT_ITEMS.map(renderBtn)}</div>
+          {/* <div className='col-2 d-flex justify-content-end gap-2'>{RIGHT_ITEMS.map(renderBtn)}</div> */}
         </div>
       </div>
     </div>
