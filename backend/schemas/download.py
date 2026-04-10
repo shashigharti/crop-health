@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from datetime import date
+from pydantic import BaseModel, Field, model_validator
 from .types import GeoJSONGeometry, LayerURLs
 
 
@@ -10,6 +11,20 @@ class DownloadRequest(BaseModel):
         description="Crop class name",
         examples=["coffee"],
     )
+    start_date: date = Field(
+        description="Start date for the download request",
+        examples=["2024-01-01"],
+    )
+    end_date: date = Field(
+        description="End date for the download request",
+        examples=["2024-12-31"],
+    )
+
+    @model_validator(mode="after")
+    def validate_dates(self):
+        if self.end_date <= self.start_date:
+            raise ValueError("end_date must be after start_date")
+        return self
 
 
 class LayersResponse(BaseModel):

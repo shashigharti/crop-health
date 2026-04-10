@@ -24,19 +24,15 @@ class GeoJSONGeometry(BaseModel):
 
 
 class LayerURLs(BaseModel):
-    emit_rgb: str = Field(
-        description="EMIT RGB tile URL",
-        examples=["https://earthengine.googleapis.com/emit_rgb/..."],
+    emit_rgb: dict = Field(
+        description="EMIT RGB tile URL + legend",
     )
-    s2_rgb: str = Field(
-        description="Sentinel-2 RGB tile URL",
-        examples=["https://earthengine.googleapis.com/s2_rgb/..."],
+    s2_rgb: dict = Field(
+        description="Sentinel-2 RGB tile URL + legend",
     )
-    ndvi: str = Field(
-        description="NDVI tile URL",
-        examples=["https://earthengine.googleapis.com/ndvi/..."],
+    ndvi: dict = Field(
+        description="NDVI tile URL + legend",
     )
-    ndre: str = Field(
-        description="NDRE tile URL",
-        examples=["https://earthengine.googleapis.com/ndre/..."],
+    ndre: dict = Field(
+        description="NDRE tile URL + legend",
     )

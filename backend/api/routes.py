@@ -10,8 +10,8 @@ from utils.dummy import DUMMY_GEOJSON
 router = APIRouter(prefix="/api")
 
 state = {
-    "classes": {},  # { "coffee": { aoi, emit, s2, ndvi, ndre }, ... }
-    "class_label_map": {},  # { "coffee": 0, "cocoa": 1, ... } — stable labels
+    "classes": {},
+    "class_label_map": {},
     "training_fc": None,
     "class_img": None,
 }
@@ -46,7 +46,7 @@ class Vis:
     NDVI = {"min": 0.0, "max": 0.9, "palette": [Color.RED, Color.YELLOW, Color.GREEN]}
     NDRE = {"min": -0.2, "max": 0.4, "palette": [Color.BLUE, Color.YELLOW, Color.RED]}
     CROP_MAP = {"min": 0, "max": 2, "palette": [Color.GRAY, Color.LIME, Color.MAGENTA]}
-    #                                                   other       coffee        cocoa
+    #                                                       other      coffee        cocoa
 
 
 EMIT_TARGET_WAVELENGTHS = [
@@ -69,6 +69,22 @@ EMIT_TARGET_WAVELENGTHS = [
     1200,
 ]
 
+LEGENDS = {
+    "s2_rgb": [
+        {"name": "B4", "wavelength_nm": 665},
+        {"name": "B3", "wavelength_nm": 560},
+        {"name": "B2", "wavelength_nm": 490},
+    ],
+    "ndvi": {
+        "palette": ["#d73027", "#ffffbf", "#1a9850"],
+        "labels": {-1: "Bare/Water", 0: "Moderate", 1: "Dense vegetation"},
+    },
+    "ndre": {
+        "palette": ["#8c510a", "#f5f5f5", "#01665e"],
+        "labels": {-1: "Low red-edge", 0: "Neutral", 1: "Healthy canopy"},
+    },
+}
+
 
 def get_or_create_label(class_name: str) -> int:
     """Assign a stable numeric label to a class name."""
@@ -81,11 +97,13 @@ def get_or_create_label(class_name: str) -> int:
 def download_layers(request: DownloadRequest):
     aoi = ee.Geometry(request.aoi.model_dump())
     class_name = request.class_name.lower()
+    start_date = request.start_date.isoformat()
+    end_date = request.end_date.isoformat()
 
     emit_ic = (
         ee.ImageCollection(Collection.EMIT)
         .filterBounds(aoi)
-        .filterDate("2022-01-01", "2026-01-01")
+        .filterDate(start_date, end_date)
         .sort("system:time_start", False)
     )
 
@@ -100,7 +118,7 @@ def download_layers(request: DownloadRequest):
     s2_ic = (
         ee.ImageCollection(Collection.S2)
         .filterBounds(aoi)
-        .filterDate("2023-01-01", "2025-01-01")
+        .filterDate(start_date, end_date)
         .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 60))
         .map(mask_s2)
     )
@@ -142,12 +160,30 @@ def download_layers(request: DownloadRequest):
         "status": f"Loaded {n_emit} EMIT scene(s) for class: {class_name}.",
         "n_emit": n_emit,
         "layers": {
-            "emit_rgb": get_tile_url(
-                emit.select([b_r, b_g, b_b]).clip(aoi), Vis.EMIT_RGB
-            ),
-            "s2_rgb": get_tile_url(s2.select(["B4", "B3", "B2"]).clip(aoi), Vis.S2_RGB),
-            "ndvi": get_tile_url(ndvi, Vis.NDVI),
-            "ndre": get_tile_url(ndre, Vis.NDRE),
+            "emit_rgb": {
+                "url": get_tile_url(
+                    emit.select([b_r, b_g, b_b]).clip(aoi), Vis.EMIT_RGB
+                ),
+                "legend": [
+                    {"name": b_r, "wavelength_nm": 660},
+                    {"name": b_g, "wavelength_nm": 550},
+                    {"name": b_b, "wavelength_nm": 470},
+                ],
+            },
+            "s2_rgb": {
+                "url": get_tile_url(
+                    s2.select(["B4", "B3", "B2"]).clip(aoi), Vis.S2_RGB
+                ),
+                "legend": LEGENDS["s2_rgb"],
+            },
+            "ndvi": {
+                "url": get_tile_url(ndvi, Vis.NDVI),
+                "legend": LEGENDS["ndvi"],
+            },
+            "ndre": {
+                "url": get_tile_url(ndre, Vis.NDRE),
+                "legend": LEGENDS["ndre"],
+            },
         },
     }
 
@@ -244,96 +280,121 @@ def train():
     }
 
 
-@router.post("/plots/make", response_model=PlotsResponse)
-def make_plots():
-    if not state["class_img"] or not state["classes"]:
-        raise HTTPException(status_code=400, detail="Train the model first.")
+# @router.post("/plots/make", response_model=PlotsResponse)
+# def make_plots():
+#     if not state["class_img"] or not state["classes"]:
+#         raise HTTPException(status_code=400, detail="Train the model first.")
 
-    all_values = list(state["classes"].values())
-    merged_aoi = all_values[0]["aoi"]
-    for v in all_values[1:]:
-        merged_aoi = merged_aoi.union(v["aoi"])
+#     all_values = list(state["classes"].values())
+#     merged_aoi = all_values[0]["aoi"]
+#     for v in all_values[1:]:
+#         merged_aoi = merged_aoi.union(v["aoi"])
 
-    ndvi = ee.ImageCollection([v["ndvi"] for v in all_values]).mosaic()
-    ndre = ee.ImageCollection([v["ndre"] for v in all_values]).mosaic()
-    crop_img = state["class_img"]
+#     ndvi = ee.ImageCollection([v["ndvi"] for v in all_values]).mosaic()
+#     ndre = ee.ImageCollection([v["ndre"] for v in all_values]).mosaic()
+#     crop_img = state["class_img"]
 
-    def build_plots(mask, crop_name, scale_m=60):
-        mask_stats = mask.reduceRegion(
-            reducer=ee.Reducer.sum(),
-            geometry=merged_aoi,
-            scale=scale_m,
-            maxPixels=1e13,
-            bestEffort=True,
-        ).getInfo()
+#     def build_plots(mask, crop_name, scale_m=60):
+#         mask_stats = mask.reduceRegion(
+#             reducer=ee.Reducer.sum(),
+#             geometry=merged_aoi,
+#             scale=scale_m,
+#             maxPixels=1e13,
+#             bestEffort=True,
+#         ).getInfo()
 
-        pixel_sum = list(mask_stats.values())[0] if mask_stats else 0
-        if not pixel_sum:
-            return None
+#         pixel_sum = list(mask_stats.values())[0] if mask_stats else 0
+#         if not pixel_sum:
+#             return None
 
-        labeled = (
-            mask.selfMask()
-            .connectedComponents(ee.Kernel.square(1), 1024)
-            .select("labels")
-            .rename("plot_id")
-        )
-        plots = labeled.reduceToVectors(
-            reducer=ee.Reducer.countEvery(),
-            geometry=merged_aoi,
-            scale=scale_m,
-            geometryType="polygon",
-            labelProperty="plot_id",
-            bestEffort=True,
-            maxPixels=1e13,
-        )
-        if plots.size().getInfo() == 0:
-            return None
-        return plots.map(lambda f: f.set({"crop": crop_name}))
+#         labeled = (
+#             mask.selfMask()
+#             .connectedComponents(ee.Kernel.square(1), 1024)
+#             .select("labels")
+#             .rename("plot_id")
+#         )
+#         plots = labeled.reduceToVectors(
+#             reducer=ee.Reducer.countEvery(),
+#             geometry=merged_aoi,
+#             scale=scale_m,
+#             geometryType="polygon",
+#             labelProperty="plot_id",
+#             bestEffort=True,
+#             maxPixels=1e13,
+#         )
+#         if plots.size().getInfo() == 0:
+#             return None
+#         return plots.map(lambda f: f.set({"crop": crop_name}))
 
-    all_plots = None
-    skipped = []
-    for class_name, label in state["class_label_map"].items():
-        if class_name == "other":
-            continue
-        plots = build_plots(crop_img.eq(label), class_name)
-        if plots is None:
-            skipped.append(class_name)
-            continue
-        all_plots = plots if all_plots is None else all_plots.merge(plots)
+#     all_plots = None
+#     skipped = []
+#     for class_name, label in state["class_label_map"].items():
+#         if class_name == "other":
+#             continue
+#         plots = build_plots(crop_img.eq(label), class_name)
+#         if plots is None:
+#             skipped.append(class_name)
+#             continue
+#         all_plots = plots if all_plots is None else all_plots.merge(plots)
 
-    if all_plots is None or all_plots.size().getInfo() == 0:
-        return {
-            "status": f"No plots found. Skipped: {skipped}. Showing dummy data for UI testing.",
-            "geojson": DUMMY_GEOJSON,
-        }
+#     if all_plots is None or all_plots.size().getInfo() == 0:
+#         return {
+#             "status": f"No plots found. Skipped: {skipped}. Showing dummy data for UI testing.",
+#             "geojson": DUMMY_GEOJSON,
+#         }
 
-    all_plots = all_plots.map(
-        lambda f: f.set(
-            {
-                "ndvi_mean": ndvi.reduceRegion(
-                    ee.Reducer.mean(), f.geometry(), 20, maxPixels=1e9
-                ).get("NDVI"),
-                "ndre_mean": ndre.reduceRegion(
-                    ee.Reducer.mean(), f.geometry(), 60, maxPixels=1e9
-                ).get("NDRE"),
-            }
+#     all_plots = all_plots.map(
+#         lambda f: f.set(
+#             {
+#                 "ndvi_mean": ndvi.reduceRegion(
+#                     ee.Reducer.mean(), f.geometry(), 20, maxPixels=1e9
+#                 ).get("NDVI"),
+#                 "ndre_mean": ndre.reduceRegion(
+#                     ee.Reducer.mean(), f.geometry(), 60, maxPixels=1e9
+#                 ).get("NDRE"),
+#             }
+#         )
+#     )
+
+
+# def add_health(f):
+#     nv = ee.Number(f.get("ndvi_mean"))
+#     nr = ee.Number(f.get("ndre_mean"))
+#     healthy = nv.gte(0.60).And(nr.gte(0.20))
+#     stressed = nv.lt(0.45).Or(nr.lt(0.10))
+#     moderate = healthy.Not().And(stressed.Not())
+#     health = ee.Number(0).where(moderate, 1).where(healthy, 2)
+#     return f.set({"health": health, "area_ha": f.geometry().area(1).divide(10000)})
+
+# plots_fc = all_plots.map(add_health)
+# state["plots_fc"] = plots_fc
+# geojson = plots_fc.getInfo()
+
+# return {
+#     "status": f"Plots created: {len(geojson['features'])} plots. Skipped: {skipped}.",
+#     "geojson": geojson,
+# }
+
+
+@router.post("/plots/make")
+def get_plot_stats(aoi_id: str, plots_geojson: dict):
+    state = get_state(aoi_id)
+    ndvi = state["ndvi"]
+    ndre = state["ndre"]
+
+    plots_fc = ee.FeatureCollection(plots_geojson)
+
+    stats = (
+        ndvi.rename("ndvi")
+        .addBands(ndre.rename("ndre"))
+        .reduceRegions(
+            collection=plots_fc,
+            reducer=ee.Reducer.mean(),
+            scale=10,
         )
     )
 
-    def add_health(f):
-        nv = ee.Number(f.get("ndvi_mean"))
-        nr = ee.Number(f.get("ndre_mean"))
-        healthy = nv.gte(0.60).And(nr.gte(0.20))
-        stressed = nv.lt(0.45).Or(nr.lt(0.10))
-        moderate = healthy.Not().And(stressed.Not())
-        health = ee.Number(0).where(moderate, 1).where(healthy, 2)
-        return f.set({"health": health, "area_ha": f.geometry().area(1).divide(10000)})
-
-    plots_fc = all_plots.map(add_health)
-    state["plots_fc"] = plots_fc
-    geojson = plots_fc.getInfo()
-
     return {
-        "status": f"Plots created: {len(geojson['features'])} plots. Skipped: {skipped}.",
-        "geojson": geojson,
+        "status": f"Plots created: {len(stats['features'])} plots.",
+        "geojson": stats,
     }

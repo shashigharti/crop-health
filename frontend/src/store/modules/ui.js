@@ -2,10 +2,8 @@ export const createUi = (set, get) => ({
   currentStep: 0,
   steps: [
     'Draw boundaries (AOIs) for each crop class e.g. Cocoa, Coffee',
-    'Download data (EMIT + S2) and add features',
-    'Train the ML model on your labeled data',
-    'Make Plot',
-    'Visualize, download or export your crop map results',
+    'Download data (EMIT + S2)',
+    'Visualize Indices (NDVI/NDRI)',
   ],
   stepsComplete: [false, false, false, false, false],
 
